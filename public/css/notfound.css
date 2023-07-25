@@ -1,0 +1,80 @@
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(216, 232, 226); 
+}
+
+.back_home__btn {
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: rgb(236, 169, 81);
+    border-radius: 25px;
+    mix-blend-mode: difference;
+    font-weight: bold;
+    text-align: center;
+}
+
+p {
+    font-size: 1.4rem;
+    line-height: 40px;
+    text-align: center;
+    mix-blend-mode: darken;
+    color: rgba(0, 0, 0, 0.819);
+    font-weight: 500;
+}
+
+main {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+section {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.not__found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+    flex-direction: column;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.not__found__title {
+    font-size: 2.5rem !important;
+    color: rgb(236, 169, 81);
+    mix-blend-mode: difference;
+  } 
+
+
+
+@media screen and (max-width: 768px){
+  .not__found {
+    width: 85%;
+  } 
+
+  .not__found__title {
+    font-size: 1.5rem !important;
+    color: rgb(236, 169, 81);
+    mix-blend-mode: difference;
+  } 
+
+  p {
+    font-size: 1.2rem;
+    line-height: 40px;
+    text-align: center;
+}
+}
+
