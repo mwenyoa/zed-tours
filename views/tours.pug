@@ -1,0 +1,42 @@
+extends base
+
+block content 
+    main 
+      section
+        .all__tours__heading
+           h1.tours__title All Tours
+        .tour__cards
+
+           each tour in tours
+
+            .card
+                .card__header 
+                img(src="assets/Jerocare.png", alt=``, sizes=`150px x 100px`).tours__card__img
+                h3.card__tour__title
+                  span=tour.tourname
+                .card__content
+                h3.tour__difficult__duration 
+                   span.tour__difficult
+                    span=tour.tourType
+                   span.tour__duration
+                     span=`${tour.duration.toLocaleString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}`
+                     span Days Tour
+                p.tour__summary=tour.shortDescription
+                .tour__details 
+                    p.tour__location= `${tour.city}`
+                    p.tour__capacity=tour.maxTourSize
+                      span  People
+                    p.tour__rating
+                      span Rating - 
+                      span=tour.rating
+                    p.tour__date
+                      span=tour.tourDates
+                .card__footer
+                  p.tour_price
+                    span Price $
+                    span=tour.price
+                    span <br />
+                    Span Per Person
+                  p.tour__details__btn: a(href=`/${tour._id}`).view__more__link View Tour
+
+                 
