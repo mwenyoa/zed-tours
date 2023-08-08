@@ -1,5 +1,5 @@
 const User = require("./../models/userModel");
-const {filterQuery, sortQuery, limitQuery} = require('./../utils');
+const {filterQuery, sortQuery, limitQuery} = require('./../utilities/ApiFeatures');
 
 exports.getUsers = async (req, res) => {
   try {  
@@ -90,3 +90,33 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
+
+// Users Agrigation pipeline
+
+exports.getUsersStatics = async(req, res) => {
+  try {
+    const usersStats = await User.aggregate([
+      {
+        $match: {age: {$gte: 30}}
+      },
+      {
+        $group: {
+         _id: null,
+          numUsers: {$sum: 1},
+          minAge: {$min: '$age'},
+          maxAge: {$max: '$age'},
+          ageAvg: {$avg: '$age'},
+        }
+      }
+    ]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        usersStats,
+      }
+    })
+  } catch (err) {
+    
+  }
+}
+
