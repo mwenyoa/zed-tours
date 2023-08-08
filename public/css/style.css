@@ -173,7 +173,7 @@ footer {
 /* All tours Cards */
 .tour__cards {
   display: grid;
-  gap: 50px;
+  gap: 40px;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   width: 85%;
   margin: 0 auto;
@@ -181,13 +181,15 @@ footer {
 }
 
 .card {
-  box-shadow: 0 5px 5px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: rgba(0, 0, 0, 0.2) 0 12px 28px 0, rgba(0, 0, 0, 0.1) 0 2px 4px 0,
+    rgba(255, 255, 255, 0.05) 0 0 0 1px inset;
   padding: 2%;
   border-radius: 10px;
 }
 
 .card:hover {
-  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: rgba(0, 0, 0, 0.3) 0 12px 28px 0, rgba(0, 0, 0, 0.1) 0 2px 4px 0,
+  rgba(255, 255, 255, 0.05) 0 0 0 1px inset;
 }
 
 .card__tour__title {

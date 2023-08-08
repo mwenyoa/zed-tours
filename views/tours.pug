@@ -19,7 +19,7 @@ block content
                    span.tour__difficult
                     span=tour.tourType
                    span.tour__duration
-                     span=`${tour.duration.toLocaleString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}`
+                     span=`${tour.duration}`
                      span Days Tour
                 p.tour__summary=tour.shortDescription
                 .tour__details 
@@ -30,7 +30,7 @@ block content
                       span Rating - 
                       span=tour.rating
                     p.tour__date
-                      span=tour.tourDates
+                      span=tour.tourDates.toLocaleString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).replace(/ /g, "-")
                 .card__footer
                   p.tour_price
                     span Price $
@@ -38,5 +38,3 @@ block content
                     span <br />
                     Span Per Person
                   p.tour__details__btn: a(href=`/${tour._id}`).view__more__link View Tour
-
-                 

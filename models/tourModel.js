@@ -92,6 +92,14 @@ const tourSchema = new mongoose.Schema({
     type: Date,
     default: Date.now()
   }
+}, {
+   toJSON: { virtuals: true },
+   toObject: { virtuals: true }
+});
+
+// Data that is not saved to db but is part of the output
+tourSchema.virtual('tourDurationWeeks').get(function(){
+  return  this.duration / 7;
 });
 
 tourSchema.pre("save", function(next){

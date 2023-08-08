@@ -6,12 +6,13 @@ const {
   createTour,
   deleteTour,
   updateTour,
-  tourStats
+  tourStats,
+  topCheapTours
 } = require("../controllers/toursController");
-// runing middleware for specific request routes
-// router.param('id', checkBody); 
+
+router.route("/top-cheap-tours").get(topCheapTours, getTours);
 router.route("/").get(getTours).post(createTour); 
-router.route("/statistics").get(tourStats);
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
-// export router as dea
+router.route("/statistics").get(tourStats);
+
 module.exports = router;
