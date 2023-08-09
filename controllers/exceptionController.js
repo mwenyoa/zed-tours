@@ -8,7 +8,8 @@ const dbCastErrorHandler = (err) => {
 };
 // [2] duplicate value errors
 const dbDuplicateValuesHandler = (err) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
+  console.log(value);
   const message = `Duplicate field value ${value} try another string name`;
   return new AppError(message, 400);
 };
@@ -58,9 +59,9 @@ module.exports = (err, req, res, next) => {
     sendErrorsInDev(res, err);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
-    if (err.name === "CastError") error = dbCastErrorHandler(error);
-    if (err.code === 11000) error = dbDuplicateValuesHandler(error);
-    if (err.ValidationError) error = dbValidationErrorHandler(error);
+    if (error.name === "CastError") error = dbCastErrorHandler(error);
+    if (error.code === 11000) error = dbDuplicateValuesHandler(error);
+    if (error.ValidationError) error = dbValidationErrorHandler(error);
     sendErrorsInProd(res, error);
   }
 };
