@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "User account should have a password"],
     minlength: [6, "User password must be 6 or more characters"],
-    select: false
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  passwordChangedAt: Date,
 });
 
 // encrypt password
@@ -65,8 +66,22 @@ userSchema.pre("save", async function (next) {
 });
 
 // password compare instance method
-userSchema.methods.comparePasswords =  async function(userPaswword, dbPassword){
+userSchema.methods.comparePasswords = async function (
+  userPaswword,
+  dbPassword
+) {
   return await bycrpt.compare(userPaswword, dbPassword);
-}
+};
+
+// Check if user changed password after Token Issue
+userSchema.methods.passwordChangedAfterTokenIssue = function (
+  JWTIssuedAt
+) {
+  if (this.passwordChangedAt) {
+    const changedAt = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return changedAt > JWTIssuedAt;
+  }
+  return false;
+};
 
 module.exports = mongoose.model("User", userSchema);
