@@ -1,7 +1,8 @@
+const { promisify } = require("node:util");
 const JWT = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const catchAsyncError = require("./../utilities/catchAsyncError");
-const AppError = require("./../utilities/Error");
+const AppError = require("./../utilities/AppError");
 
 // Sign User token
 const signToken = (userId) => {
@@ -10,7 +11,7 @@ const signToken = (userId) => {
   });
 };
 
-// Regiater User
+// Register User
 exports.SignUp = catchAsyncError(async (req, res, next) => {
   // securely create user with needed fields
   const { username, email, password, passwordConfirm } = req.body;
@@ -18,7 +19,7 @@ exports.SignUp = catchAsyncError(async (req, res, next) => {
     username,
     email,
     password,
-    passwordConfirm,
+    passwordConfirm
   });
 
   if (!newUser) {
@@ -58,4 +59,45 @@ exports.SignIn = catchAsyncError(async (req, res, next) => {
     },
     token,
   });
+});
+
+// LogIn status checker middleware
+exports.LoginVerification = catchAsyncError(async (req, res, next) => {
+ // check if token is present in the request headers object
+ let token;
+ if (
+   req.headers.authorization &&
+   req.headers.authorization.startsWith("Bearer")
+ ) {
+   token = req.headers.authorization.split(" ")[1];
+ }
+ if (!token) {
+   return next(
+     new AppError("You are not logged in to view the requested page", 401)
+   );
+ }
+ // return decoded token by verifying the token
+ const verifiedToken = await promisify(JWT.verify)(
+   token,
+   process.env.JWT_SECRET_KEY
+ );
+ if (!verifiedToken) {
+   return next(new AppError("Invalid token. please login again", 401));
+ }
+ // check if payload has a db record
+ const user = await User.findById(verifiedToken.id);
+ if (!user) {
+   return next(new AppError(
+     "User account does not exist. Create an account and login  to have access", 401
+   ));
+
+ }
+ // check if the user has changed password after been issued a token
+  if(user.passwordChangedAfterTokenIssue(verifiedToken.iat)){
+   return next(new AppError("Passaword was recently changed, please login again", 401));
+  }
+
+ //  Grant acess if user has been properly authenticated ;
+  req.user = user;
+  next();
 });
