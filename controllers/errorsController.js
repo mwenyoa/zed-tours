@@ -3,13 +3,11 @@ const AppError = require("../utilities/AppError");
 // ============ Handle DB Errors ===========
 //[1] cast error
 const dbCastErrorHandler = (err) => {
-  console.log("error", err);
   const message = `Invalid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
 };
 // [2] duplicate value errors
 const dbDuplicateValuesHandler = (err) => {
-  console.log("Errors 123: ", err);
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
   const message = `Duplicate field value ${value} try another string name`;
   return new AppError(message, 400);
