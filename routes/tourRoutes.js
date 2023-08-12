@@ -9,9 +9,10 @@ const {
   tourStats,
   topCheapTours
 } = require("../controllers/toursController");
+const { LoginVerification } = require("./../controllers/authController");
 
 router.route("/top-cheap-tours").get(topCheapTours, getTours);
-router.route("/").get(getTours).post(createTour); 
+router.route("/").get(LoginVerification, getTours).post(createTour); 
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 router.route("/statistics").get(tourStats);
 
