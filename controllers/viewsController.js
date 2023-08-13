@@ -1,5 +1,5 @@
 const Tour = require('./../models/tourModel')
-const AppError = require("./../utilities/Error");
+const AppError = require("../utilities/AppError");
 
 exports.toursListing = async (req, res, next) => {
     const tours = await Tour.find() ;

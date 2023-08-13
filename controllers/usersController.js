@@ -39,23 +39,6 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.createUser = async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.status(201).json({
-      status: "Success",
-      data: {
-        user,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err.message,
-    });
-  }
-};
-
 exports.updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {

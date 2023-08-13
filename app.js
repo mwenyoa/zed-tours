@@ -4,8 +4,8 @@ const morgan = require("morgan");
 const usersRouter = require("./routes/userRoutes");
 const toursRouter = require("./routes/tourRoutes");
 const viewRouter = require("./routes/viewRoutes");
-const appException = require("./utilities/Error");
-const appExceptionHandler = require("./controllers/exceptionController");
+const AppError= require("./utilities/AppError");
+const AppErrorHandler = require("./controllers/errorsController");
 
 const app = express();
 // log user requests stats
@@ -24,14 +24,15 @@ app.use("/api/v1/users", usersRouter);
 app.use("/", viewRouter);
 // capture uncaught errors
 app.all("*", (req, res, next) => {
-  const err = new appException(
+  const err = new AppError(
     `The requested resource url ${req.originalUrl} was not found on our server`, 404
   );
+  
   next(err);
 });
 
 
 // Error Handler middleware
-app.use(appExceptionHandler);
+app.use(AppErrorHandler);
 
 module.exports = app;

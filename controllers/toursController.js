@@ -6,7 +6,7 @@ const {
   paginateQuery,
 } = require("./../utilities/ApiFeatures");
 const catchAsyncError = require("./../utilities/catchAsyncError");
-const AppError = require("./../utilities/Error");
+const AppError = require("../utilities/AppError");
 
 exports.topCheapTours = catchAsyncError(async (req, res, next) => {
   req.query.limit = "3";
@@ -23,6 +23,7 @@ exports.getTours = catchAsyncError(async (req, res, next) => {
   queryStr = limitQuery(req, queryStr);
   queryStr = paginateQuery(req, queryStr, Tour);
   const tours = await queryStr;
+  
   res.status(200).json({
     status: "success",
     results: tours.length,

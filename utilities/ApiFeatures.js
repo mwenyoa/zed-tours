@@ -36,12 +36,12 @@ exports.filterQuery = (req) => {
   // Paginate results
   exports.paginateQuery = async (req, queryStr, model) => {
     let page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 3;
+    const limit = req.query.limit * 1 || 2;
     const totalDocsCount = await model.countDocuments();
     const totalCount = totalDocsCount / limit;
     const lastPage = Math.floor(totalCount);
     page = page > lastPage ? lastPage : page;
-    let skip = (page - 1) * limit;
+    let skip = (page - 1) * limit < 1 ;
     skip  = skip > limit ? limit : skip;
     queryStr = queryStr.skip(skip).limit(limit);
     return queryStr;

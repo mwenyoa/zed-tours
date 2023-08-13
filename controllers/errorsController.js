@@ -1,4 +1,4 @@
-const AppError = require("./../utilities/Error");
+const AppError = require("../utilities/AppError");
 
 // ============ Handle DB Errors ===========
 //[1] cast error
@@ -18,20 +18,25 @@ const dbValidationErrorHandler = (err) => {
   const message = `Validation error. ${errors.join(". ")}`;
   return new AppError(message, 400);
 };
-// ======== EOF DB Error Handlers ========
+
+// =============== THIRD PARTY ERRORS =====================
+const jwtErrorHandler = () =>
+  new AppError("Invalid Token, Please Log In Again", 401);
+
+const jwtExpiredTokenHandler = () =>
+  new AppError("Token has expired, login again", 401);
+// =============== EOF THIRD PARTY ERRORS =================
 
 // production errors
-const sendErrorsInProd = (res, err) => {
+const sendErrorsInProd = (err, res) => {
   //  check if error is operational
-  if (err.isExpected) {
+  if (err.isErrorExpected) {
     res.status(err.statusCode).json({
       status: err.status,
-      message: err.message,
+      message: err.message
     });
   } else {
-    // log error for debuging
-    console.error("Error Occurred", err);
-    // send generic error message
+   
     res.status(500).json({
       status: "error",
       message: "Something went wrong with the system",
@@ -40,7 +45,7 @@ const sendErrorsInProd = (res, err) => {
 };
 
 // development errors
-const sendErrorsInDev = (res, err) => {
+const sendErrorsInDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
@@ -55,12 +60,14 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || "error";
   // send errors based on the environment
   if (process.env.NODE_ENV === "development") {
-    sendErrorsInDev(res, err);
+    sendErrorsInDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
-    if (err.name === "CastError") error = dbCastErrorHandler(error);
-    if (err.code === 11000) error = dbDuplicateValuesHandler(error);
-    if (err.ValidationError) error = dbValidationErrorHandler(error);
-    sendErrorsInProd(res, error);
+    if (error.name === "CastError") error = dbCastErrorHandler(error);
+    if (error.code === 11000) error = dbDuplicateValuesHandler(error);
+    if (error.ValidationError) error = dbValidationErrorHandler(error);
+    if (error.name === "JsonWebTokenError") error = jwtErrorHandler();
+    if (error.name === "TokenExpiredError") error = jwtExpiredTokenHandler();
+    sendErrorsInProd(error, res);
   }
 };
