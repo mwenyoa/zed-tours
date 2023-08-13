@@ -1,6 +1,8 @@
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const bycrpt = require("bcryptjs");
 
+// User Schema Modeling
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -33,6 +35,17 @@ const userSchema = new mongoose.Schema({
       message: "Two passwords did not match",
     },
   },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordTokenExpires: {
+    type: Date,
+  },
+  role: {
+    type: String,
+    enum: ["user", "tourguider", "admin"],
+    default: "user",
+  },
   photo: {
     type: String,
     trim: true,
@@ -53,7 +66,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
 });
-
+// ===================== MIDDLEWARES ==================
 // encrypt password
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -65,7 +78,15 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// password compare instance method
+// update password changed at field on password reset success 
+userSchema.pre("save", async function (next) {
+  if (this.isNew || !this.isModified("password")) return next();
+    this.passwordChangedAt = Date.now() - 1000;
+   next();
+});
+
+// ======================= INSTANCE METHODS =======================
+//  compare passwords
 userSchema.methods.comparePasswords = async function (
   userPaswword,
   dbPassword
@@ -74,14 +95,25 @@ userSchema.methods.comparePasswords = async function (
 };
 
 // Check if user changed password after Token Issue
-userSchema.methods.passwordChangedAfterTokenIssue = function (
-  JWTIssuedAt
-) {
+userSchema.methods.passwordChangedAfterTokenIssue = function (JWTIssuedAt) {
   if (this.passwordChangedAt) {
     const changedAt = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
     return changedAt > JWTIssuedAt;
   }
   return false;
+};
+
+// Forgot Password
+userSchema.methods.resetPasswordToken = function () {
+  resetToken = crypto.randomBytes(32).toString("hex");
+  // create and update hash object
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  // set password token expirely time in miliseconds
+  this.passwordTokenExpires = Date.now() + 15 * 60 * 1000;
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);
