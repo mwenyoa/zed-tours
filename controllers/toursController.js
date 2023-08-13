@@ -23,6 +23,7 @@ exports.getTours = catchAsyncError(async (req, res, next) => {
   queryStr = limitQuery(req, queryStr);
   queryStr = paginateQuery(req, queryStr, Tour);
   const tours = await queryStr;
+  
   res.status(200).json({
     status: "success",
     results: tours.length,
